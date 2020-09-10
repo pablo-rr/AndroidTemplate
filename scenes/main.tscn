@@ -1,0 +1,100 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://fonts/Prototype.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://sprites/particles/ring.png" type="Texture" id=26]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 5 )
+
+[sub_resource type="Theme" id=2]
+default_font = SubResource( 1 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "# READ ME TO UNDERSTAND EVERYTHING PLEASE
+# 
+# This framework/template is meant to be used in simple games that don't have tons of complexity
+# for example, simple Clicker games, party games with challenges, simple puzzle games...
+# 
+# There are some resources that may be useful in the development of your game.
+# - Frame and button textures
+# - Simple audio tracks
+# - Fonts in different sizes
+# 
+# All the views must be stored in the root node (this one), and to change between then, use
+# changeView(oldView, newView).
+# 
+# There is also a custom button with its own interactions. It works as the default Godot's button,
+# but it's more customizable:
+# - 4 modes (normal[text or icon], square[text or icon], rectangle[text or icon], rectangle[text & icon])
+# - Pressed and released behaviour updating text height
+
+
+extends Control
+
+# the transition time between Views
+export (float) var tweenTime
+
+func _ready():
+	pass
+
+# tween the oldView out of screen, and then tween the newView into the screen
+func changeView(newView, oldView):
+	var tweenNew = get_node(\"tweenNew\")
+	newView.rect_position.x = -720
+	tweenNew.interpolate_property(newView, \"rect_position\",
+		Vector2(newView.rect_position.x, 0), Vector2(0, 0), tweenTime,
+		Tween.TRANS_SINE, Tween.EASE_IN_OUT)
+	tweenNew.start()
+	
+	var tweenOld = get_node(\"tweenOld\")
+	tweenOld.interpolate_property(oldView, \"rect_position\",
+		Vector2(oldView.rect_position.x, 0), Vector2(720, 0), tweenTime,
+		Tween.TRANS_SINE, Tween.EASE_IN_OUT)
+	tweenOld.start()
+"
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.497854, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0, 0.77619 )
+colors = PoolColorArray( 0.636719, 0.412872, 0.617482, 1, 0.0705882, 0.0784314, 0.262745, 1 )
+
+[node name="main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource( 2 )
+script = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+tweenTime = 0.88
+
+[node name="backParticles" type="CPUParticles2D" parent="."]
+position = Vector2( 368.213, 593.533 )
+amount = 35
+lifetime = 3.0
+texture = ExtResource( 26 )
+emission_shape = 2
+emission_rect_extents = Vector2( 500, 800 )
+gravity = Vector2( 0, 0 )
+scale_amount = 0.25
+scale_amount_random = 0.2
+scale_amount_curve = SubResource( 4 )
+color_ramp = SubResource( 5 )
+
+[node name="tweenNew" type="Tween" parent="."]
+
+[node name="tweenOld" type="Tween" parent="."]
+
+[node name="main" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,80 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://audio/fx/tap.wav" type="AudioStream" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://scripts/buttonImageController.gd\"
+
+export (Texture) var icon
+export (String) var text = \"default\"
+export (String) var mode
+export (bool) var pressDelay = true
+
+func _ready():
+	if(mode == \"normal\"):
+		setLabelsNormal(icon, text)
+		setLabelCenterNormal($Control, false)
+	elif(mode == \"bigSquare\"):
+		setLabelsBigSquare(icon, text)
+		setLabelCenterBigSquare($Control, false)
+	elif(mode == \"bigRectangle\"):
+		setLabelsBigSquare(icon, text)
+		setLabelCenterBigRectangle($Control, false)
+	elif(mode == \"bigRectangleIcon\"):
+		setLabelsBigRectangleIcon(icon, text)
+		setLabelCenterBigRectangleIcon($Control, false)
+
+func _on_button_down():
+	if(mode == \"normal\"):
+		setLabelCenterNormal($Control, true)
+	elif(mode == \"bigSquare\"):
+		setLabelCenterBigSquare($Control, true)
+	elif(mode == \"bigRectangle\"):
+		setLabelCenterBigRectangle($Control, true)
+	elif(mode == \"bigRectangleIcon\"):
+		setLabelCenterBigRectangleIcon($Control, true)
+	$tap.play(0.1)
+
+func _on_button_up():
+	if(mode == \"normal\"):
+		setLabelCenterNormal($Control, false)
+	elif(mode == \"bigSquare\"):
+		setLabelCenterBigSquare($Control, false)
+	elif(mode == \"bigRectangle\"):
+		setLabelCenterBigRectangle($Control, false)
+	elif(mode == \"bigRectangleIcon\"):
+		setLabelCenterBigRectangleIcon($Control, false)
+
+func _on_buttonChangeScene_pressed():
+	if(pressDelay):
+		disabled = true
+		yield(get_tree().create_timer(1), \"timeout\")
+		disabled = false
+"
+
+[node name="buttonChangeScene" type="TextureButton"]
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+self_modulate = Color( 1, 1, 1, 0.254902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="tap" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )
+[connection signal="button_down" from="." to="." method="_on_button_down"]
+[connection signal="button_up" from="." to="." method="_on_button_up"]
+[connection signal="pressed" from="." to="." method="_on_buttonChangeScene_pressed"]
